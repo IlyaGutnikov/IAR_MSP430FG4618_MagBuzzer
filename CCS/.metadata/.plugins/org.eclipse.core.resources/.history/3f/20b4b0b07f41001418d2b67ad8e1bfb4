@@ -1,0 +1,15 @@
+#include <msp430.h> 
+
+/*
+ * main.c
+ */
+int main(void) {
+
+	int
+
+
+    WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
+    FLL_CTL0 |= XCAP14PF;       // Configure load caps
+	
+	return 0;
+}

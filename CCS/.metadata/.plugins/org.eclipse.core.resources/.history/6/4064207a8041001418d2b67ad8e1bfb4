@@ -1,0 +1,32 @@
+#include <msp430.h> 
+
+/*
+ * main.c
+ */
+int main(void) {
+
+	//высокие частоты
+	int P1 = 27; //дл€ частоты 1209 √ц
+	int P2 = 24; //дл€ частоты 1336 √ц
+	int P3 = 22; //дл€ частоты 1477 √ц
+	int P4 = 20; //дл€ частоты 1633 √ц
+
+	//низкие частоты
+	int P5 = 47; //дл€ частоты 697 √ц
+	int P6 = 42; //дл€ частоты 770 √ц
+	int P7 = 38; //дл€ частоты 852 √ц
+	int P8 = 34; //дл€ частоты 941 √ц
+
+    WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
+    FLL_CTL0 |= XCAP14PF;       // Configure load caps
+	
+    // Wait for xtal to stabilize
+    do
+    {
+    	IFG1 &= ~OFIFG;                           // Clear OSCFault flag
+    	for (i = 0x47FF; i > 0; i--);             // Time for flag to set
+    }
+    while ((IFG1 & OFIFG));                   // OSCFault flag still set?
+
+	return 0;
+}
