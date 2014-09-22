@@ -1,7 +1,7 @@
 ******************************************************************************
                   MSP430 Linker PC v4.3.3                      
 ******************************************************************************
->> Linked Sun Sep 21 17:33:02 2014
+>> Linked Mon Sep 22 20:59:40 2014
 
 OUTPUT FILE NAME:   <MagBuzz.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 00003100
@@ -17,7 +17,7 @@ MEMORY CONFIGURATION
   INFOB                 00001000   00000080  00000000  00000080  RWIX
   INFOA                 00001080   00000080  00000000  00000080  RWIX
   RAM                   00001100   00002000  00000050  00001fb0  RWIX
-  FLASH                 00003100   0000cec0  0000001a  0000cea6  RWIX
+  FLASH                 00003100   0000cec0  0000002c  0000ce94  RWIX
   INT00                 0000ffc0   00000002  00000000  00000002  RWIX
   INT01                 0000ffc2   00000002  00000000  00000002  RWIX
   INT02                 0000ffc4   00000002  00000000  00000002  RWIX
@@ -68,8 +68,9 @@ section   page    origin      length       input sections
                   000030b4    0000004c     --HOLE--
 
 .text:_isr 
-*          0    00003100    0000001a     
+*          0    00003100    0000002c     
                   00003100    0000001a     rts430x_lc_rd_eabi.lib : boot.obj (.text:_isr:_c_int00_noexit)
+                  0000311a    00000012     main.obj (.text:_isr:PORT1_ISR)
 
 DAC12      0    0000ffdc    00000002     
                   0000ffdc    00000002     rts430x_lc_rd_eabi.lib : int14.obj (.int14)
@@ -91,7 +92,7 @@ USART1RX   0    0000ffe6    00000002
                   0000ffe6    00000002     rts430x_lc_rd_eabi.lib : int19.obj (.int19)
 
 PORT1      0    0000ffe8    00000002     
-                  0000ffe8    00000002     rts430x_lc_rd_eabi.lib : int20.obj (.int20)
+                  0000ffe8    00000002     main.obj (.int20)
 
 TIMERA1    0    0000ffea    00000002     
                   0000ffea    00000002     rts430x_lc_rd_eabi.lib : int21.obj (.int21)
@@ -311,6 +312,7 @@ address    name
 00000008   PBIN
 0000000a   PBOUT
 0000000e   PBSEL
+0000311a   PORT1_ISR
 0000013c   RESHI
 0000013a   RESLO
 00000041   RTCCTL
@@ -686,6 +688,7 @@ address    name
 00003100   __STACK_END
 00003100   _c_int00
 00003100   _c_int00_noexit
+0000311a   PORT1_ISR
 0000ffdc   __TI_int14
 0000ffde   __TI_int15
 0000ffe0   __TI_int16
@@ -720,4 +723,4 @@ UNDEFED    __TI_Handler_Table_Limit
 UNDEFED    __TI_INITARRAY_Base
 UNDEFED    __TI_INITARRAY_Limit
 
-[286 symbols]
+[287 symbols]
