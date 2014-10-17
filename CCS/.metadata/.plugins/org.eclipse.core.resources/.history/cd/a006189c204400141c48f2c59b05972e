@@ -79,6 +79,71 @@ void SetTimers(int sym)
 		SetTimerA(P1, D1);
 	}
 
+	if (sym == 2)
+	{
+		SetTimerA(P1, D1);
+	}
+
+	if (sym == 3)
+	{
+		SetTimerA(P1, D1);
+	}
+
+	if (sym == 4)
+	{
+		SetTimerA(P1, D1);
+	}
+
+	if (sym == 5)
+	{
+		SetTimerA(P1, D1);
+	}
+	if (sym == 6)
+	{
+		SetTimerA(P1, D1);
+	}
+	if (sym == 7)
+	{
+		SetTimerA(P1, D1);
+	}
+	if (sym == 8)
+	{
+		SetTimerA(P1, D1);
+	}
+	if (sym == 9)
+	{
+		SetTimerA(P1, D1);
+	}
+
+	if (sym == 10)
+	{
+		SetTimerA(P1, D1);
+	}
+	if (sym == 11)
+	{
+		SetTimerA(P1, D1);
+	}
+	if (sym == 12)
+	{
+		SetTimerA(P1, D1);
+	}
+	if (sym == 13)
+	{
+		SetTimerA(P1, D1);
+	}
+	if (sym == 14)
+	{
+		SetTimerA(P1, D1);
+	}
+	if (sym == 15)
+	{
+		SetTimerA(P1, D1);
+	}
+	if (sym == 16)
+	{
+		SetTimerA(P1, D1);
+	}
+
 	TACCTL1 = OUTMOD_7; //TACCR1 reset/set
 	TACTL = TASSEL_1 + MC_1; //запуск таймера с параметрами вверх и ACLK
 
