@@ -3,19 +3,32 @@
  * main.c
  */
 
-int count = 1;
-const int MAX_COUNT = 17;
-const int MCLK_freq = 1048576; // √ц
-//вычисл€ем количество тактов на полупериод
-const int ((MCLK_freq/697) +1 )/2; // нижн€€ частота DTMF 697 √ц
-const int ((MCLK_freq/770) +1 )/2; // нижн€€ частота DTMF 770 √ц
-const int ((MCLK_freq/852) +1 )/2; // нижн€€ частота DTMF 852 √ц
-const int ((MCLK_freq/941) +1 )/2; // нижн€€ частота DTMF 941 √ц
+//высокие частоты
+const int P1 = 27; //дл€ частоты 1209 √ц
+const int P2 = 24; //дл€ частоты 1336 √ц
+const int P3 = 22; //дл€ частоты 1477 √ц
+const int P4 = 20; //дл€ частоты 1633 √ц
 
-const int ((MCLK_freq/1209) +1 )/2; // верхн€€ частота DTMF 1209 √ц
-const int ((MCLK_freq/1336) +1 )/2; // верхн€€ частота DTMF 1336 √ц
-const int ((MCLK_freq/1477) +1 )/2; // верхн€€ частота DTMF 1477 √ц
-const int ((MCLK_freq/1633) +1 )/2; // верхн€€ частота DTMF 1633 √ц
+/*дл€ того что бы был 50% рабочий цикл*/
+const int D1 = 13;
+const int D2 = 12;
+const int D3 = 11;
+const int D4 = 10;
+
+//низкие частоты
+const int P5 = 47; //дл€ частоты 697 √ц
+const int P6 = 42; //дл€ частоты 770 √ц
+const int P7 = 38; //дл€ частоты 852 √ц
+const int P8 = 34; //дл€ частоты 941 √ц
+
+/*дл€ того что бы был 50% рабочий цикл*/
+const int D5 = 23;
+const int D6 = 21;
+const int D7 = 19;
+const int D8 = 17;
+const int MAX_COUNT = 17;
+
+int count = 1;
 
 //******************************************************************
 // Port1 Interrupt Service Rotine
@@ -26,10 +39,11 @@ __interrupt void PORT1_ISR(void)
 	if (P1IFG == 0x01)                        // SW1 interrupt
 	{
 		//обрабатываем нажатие 1 кнопки
+		SetTimers(count);
 
 		if (count == MAX_COUNT)
 		{
-			count = 0;
+			count = 1;
 		}
 		else
 		{
@@ -49,6 +63,26 @@ __interrupt void PORT1_ISR(void)
 // Port1 Interrupt Service Rotine
 //******************************************************************
 
+void SetTimerA(int freq, int duty)
+{
+	TACCR0 = freq - 1; //основной ограничитель
+	TACCR1 = duty; //дл€ того что бы рабочий чикл был равен 50%
+}
+
+void SetTimers(int sym)
+{
+	TACTL = MC_0; //стоп таймера
+	TAR = 0; // Clean Timer A counter
+
+	if (sym == 1)
+	{
+		SetTimerA(P1, D1);
+	}
+
+	TACCTL1 = OUTMOD_7; //TACCR1 reset/set
+	TACTL = TASSEL_1 + MC_1; //запуск таймера с параметрами вверх и ACLK
+
+}
 
 int main(void)
 {
@@ -82,6 +116,7 @@ int main(void)
 	/* онфигураци€ кнопок*/
 	/*****************************************************/
 
+
 	/*****************************************************/
 	/* онфигураци€ выходов*/
 	/*****************************************************/
@@ -90,37 +125,10 @@ int main(void)
 	P1SEL |= 0x04; // P1.2 TA1 option
 	P2DIR |= 0x01; // P2.0 output
 	P2SEL |= 0x01; // P2.0 TA2 option
-
-	TACCTL1 = OUTMOD_4 + CCIE; // TACCR1 toggle, interrupt enabled
-	TACCTL2 = OUTMOD_4 + CCIE; // TACCR2 toggle, iterrupt enabled
-	TACTL = TASSEL_2 + MC_2 + TAIE; // MCLK, countmode, interrupt enabled
 	/*****************************************************/
 	/* онфигураци€ выходов*/
 	/*****************************************************/
 
-	/*****************************************************/
-	/* онфигураци€ ќ”*/
-	/*****************************************************/
-	OA0CTL0 = OAN_1 + OAPM_1; // Select inputs, power mode
-	OACTL1 = OARRIP;
-	/*****************************************************/
-	/* онфигураци€ ќ”*/
-	/*****************************************************/
 
-	_BIS_SR(LPM3_bits + GIE);                 // Enter LPM3 w/interrupt
-}
-
-// Timer_A3 Interrupt Vector (TAIV) handler
-#pragma vector=TIMERA1_VECTOR
-__interrupt void Timer_A1(void)
-{
-  switch( TAIV )
-  {
-  case  2: TACCR1 += 16;                    // Add Offset to TACCR1
-           break;
-  case  4: TACCR2 += 100;                   // Add Offset to TACCR2
-           break;
-  case 10: P1OUT ^= 0x08;                   // Timer_A3 overflow
-           break;
- }
+	return 0;
 }

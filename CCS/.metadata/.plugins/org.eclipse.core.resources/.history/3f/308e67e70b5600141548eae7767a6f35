@@ -5,17 +5,6 @@
 
 int count = 1;
 const int MAX_COUNT = 17;
-const int MCLK_freq = 1048576; // Гц
-//вычисляем количество тактов на полупериод
-const int ((MCLK_freq/697) +1 )/2; // нижняя частота DTMF 697 Гц
-const int ((MCLK_freq/770) +1 )/2; // нижняя частота DTMF 770 Гц
-const int ((MCLK_freq/852) +1 )/2; // нижняя частота DTMF 852 Гц
-const int ((MCLK_freq/941) +1 )/2; // нижняя частота DTMF 941 Гц
-
-const int ((MCLK_freq/1209) +1 )/2; // верхняя частота DTMF 1209 Гц
-const int ((MCLK_freq/1336) +1 )/2; // верхняя частота DTMF 1336 Гц
-const int ((MCLK_freq/1477) +1 )/2; // верхняя частота DTMF 1477 Гц
-const int ((MCLK_freq/1633) +1 )/2; // верхняя частота DTMF 1633 Гц
 
 //******************************************************************
 // Port1 Interrupt Service Rotine
@@ -29,7 +18,7 @@ __interrupt void PORT1_ISR(void)
 
 		if (count == MAX_COUNT)
 		{
-			count = 0;
+			count = 1;
 		}
 		else
 		{
@@ -82,6 +71,7 @@ int main(void)
 	/*Конфигурация кнопок*/
 	/*****************************************************/
 
+
 	/*****************************************************/
 	/*Конфигурация выходов*/
 	/*****************************************************/
@@ -90,10 +80,6 @@ int main(void)
 	P1SEL |= 0x04; // P1.2 TA1 option
 	P2DIR |= 0x01; // P2.0 output
 	P2SEL |= 0x01; // P2.0 TA2 option
-
-	TACCTL1 = OUTMOD_4 + CCIE; // TACCR1 toggle, interrupt enabled
-	TACCTL2 = OUTMOD_4 + CCIE; // TACCR2 toggle, iterrupt enabled
-	TACTL = TASSEL_2 + MC_2 + TAIE; // MCLK, countmode, interrupt enabled
 	/*****************************************************/
 	/*Конфигурация выходов*/
 	/*****************************************************/
@@ -102,25 +88,10 @@ int main(void)
 	/*Конфигурация ОУ*/
 	/*****************************************************/
 	OA0CTL0 = OAN_1 + OAPM_1; // Select inputs, power mode
-	OACTL1 = OARRIP;
+
 	/*****************************************************/
 	/*Конфигурация ОУ*/
 	/*****************************************************/
 
 	_BIS_SR(LPM3_bits + GIE);                 // Enter LPM3 w/interrupt
-}
-
-// Timer_A3 Interrupt Vector (TAIV) handler
-#pragma vector=TIMERA1_VECTOR
-__interrupt void Timer_A1(void)
-{
-  switch( TAIV )
-  {
-  case  2: TACCR1 += 16;                    // Add Offset to TACCR1
-           break;
-  case  4: TACCR2 += 100;                   // Add Offset to TACCR2
-           break;
-  case 10: P1OUT ^= 0x08;                   // Timer_A3 overflow
-           break;
- }
 }

@@ -93,7 +93,7 @@ int main(void)
 
 	TACCTL1 = OUTMOD_4 + CCIE; // TACCR1 toggle, interrupt enabled
 	TACCTL2 = OUTMOD_4 + CCIE; // TACCR2 toggle, iterrupt enabled
-	TACTL = TASSEL_2 + MC_2 + TAIE; // MCLK, countmode, interrupt enabled
+	TACTL = TASSEL_2 + MC_2 + TAIE; // ACLK, countmode, interrupt enabled
 	/*****************************************************/
 	/*Конфигурация выходов*/
 	/*****************************************************/

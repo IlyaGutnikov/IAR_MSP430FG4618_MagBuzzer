@@ -1,10 +1,10 @@
 ******************************************************************************
                   MSP430 Linker PC v4.3.3                      
 ******************************************************************************
->> Linked Mon Sep 22 20:59:40 2014
+>> Linked Fri Oct 17 19:39:23 2014
 
 OUTPUT FILE NAME:   <MagBuzz.out>
-ENTRY POINT SYMBOL: "_c_int00"  address: 00003100
+ENTRY POINT SYMBOL: "_c_int00"  address: 00003128
 
 
 MEMORY CONFIGURATION
@@ -16,8 +16,8 @@ MEMORY CONFIGURATION
   PERIPHERALS_16BIT     00000100   00000100  00000000  00000100  RWIX
   INFOB                 00001000   00000080  00000000  00000080  RWIX
   INFOA                 00001080   00000080  00000000  00000080  RWIX
-  RAM                   00001100   00002000  00000050  00001fb0  RWIX
-  FLASH                 00003100   0000cec0  0000002c  0000ce94  RWIX
+  RAM                   00001100   00002000  00000052  00001fae  RWIX
+  FLASH                 00003100   0000cec0  0000005c  0000ce64  RWIX
   INT00                 0000ffc0   00000002  00000000  00000002  RWIX
   INT01                 0000ffc2   00000002  00000000  00000002  RWIX
   INT02                 0000ffc4   00000002  00000000  00000002  RWIX
@@ -50,7 +50,7 @@ MEMORY CONFIGURATION
   INT29                 0000fffa   00000002  00000002  00000000  RWIX
   INT30                 0000fffc   00000002  00000002  00000000  RWIX
   RESET                 0000fffe   00000002  00000002  00000000  RWIX
-  FLASH2                00010000   00010000  000000c6  0000ff3a  RWIX
+  FLASH2                00010000   00010000  00000164  0000fe9c  RWIX
 
 
 SECTION ALLOCATION MAP
@@ -58,19 +58,31 @@ SECTION ALLOCATION MAP
  output                                  attributes/
 section   page    origin      length       input sections
 --------  ----  ----------  ----------   ----------------
-.cinit     0    00003100    00000000     UNINITIALIZED
-
 .init_array 
 *          0    00003100    00000000     UNINITIALIZED
+
+.data      0    00001100    00000002     UNINITIALIZED
+                  00001100    00000002     main.obj (.data)
+
+.TI.persistent 
+*          0    00001100    00000000     UNINITIALIZED
 
 .stack     0    000030b0    00000050     UNINITIALIZED
                   000030b0    00000004     rts430x_lc_rd_eabi.lib : boot.obj (.stack)
                   000030b4    0000004c     --HOLE--
 
 .text:_isr 
-*          0    00003100    0000002c     
-                  00003100    0000001a     rts430x_lc_rd_eabi.lib : boot.obj (.text:_isr:_c_int00_noexit)
-                  0000311a    00000012     main.obj (.text:_isr:PORT1_ISR)
+*          0    00003100    00000042     
+                  00003100    00000028     main.obj (.text:_isr:PORT1_ISR)
+                  00003128    0000001a     rts430x_lc_rd_eabi.lib : boot.obj (.text:_isr:_c_int00_noexit)
+
+.const     0    00003142    00000002     
+                  00003142    00000002     main.obj (.const)
+
+.cinit     0    00003144    00000018     
+                  00003144    00000008     (.cinit..data.load) [load image, compression = rle]
+                  0000314c    00000008     (__TI_handler_table)
+                  00003154    00000008     (__TI_cinit_table)
 
 DAC12      0    0000ffdc    00000002     
                   0000ffdc    00000002     rts430x_lc_rd_eabi.lib : int14.obj (.int14)
@@ -130,12 +142,29 @@ NMI        0    0000fffc    00000002
 .reset     0    0000fffe    00000002     
                   0000fffe    00000002     rts430x_lc_rd_eabi.lib : boot.obj (.reset)
 
-.text      0    00010000    000000c6     
+.text      0    00010000    00000164     
                   00010000    0000006e     rts430x_lc_rd_eabi.lib : autoinit.obj (.text:_auto_init_hold_wdt)
-                  0001006e    0000004a     main.obj (.text:main)
-                  000100b8    00000006     rts430x_lc_rd_eabi.lib : isr_trap.obj (.text:__TI_ISR_TRAP)
-                  000100be    00000004                            : pre_init.obj (.text:_system_pre_init)
-                  000100c2    00000004                            : exit.obj (.text:abort)
+                  0001006e    00000062                            : copy_decompress_rle.obj (.text:__TI_decompress_rle_core)
+                  000100d0    0000005a     main.obj (.text:main)
+                  0001012a    00000014     rts430x_lc_rd_eabi.lib : memcpy.obj (.text:memcpy)
+                  0001013e    00000012                            : copy_decompress_none.obj (.text:decompress:none:__TI_decompress_none)
+                  00010150    00000006                            : isr_trap.obj (.text:__TI_ISR_TRAP)
+                  00010156    00000006                            : copy_decompress_rle.obj (.text:decompress:rle24:__TI_decompress_rle24)
+                  0001015c    00000004                            : pre_init.obj (.text:_system_pre_init)
+                  00010160    00000004                            : exit.obj (.text:abort)
+
+
+LINKER GENERATED COPY TABLES
+
+__TI_cinit_table @ 00003154 records: 1, size/record: 8, table size: 8
+	.data: load addr=00003144, load size=00000008 bytes, run addr=00001100, run size=00000002 bytes, compression=rle
+
+
+LINKER GENERATED HANDLER TABLE
+
+__TI_handler_table @ 0000314c records: 2, size/record: 4, table size: 8
+	index: 0, handler: __TI_decompress_rle24
+	index: 1, handler: __TI_decompress_none
 
 
 GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
@@ -183,7 +212,7 @@ address    name
 00000046   BTCNT12
 00000047   BTCNT2
 00000040   BTCTL
-000100c2   C$$EXIT
+00010160   C$$EXIT
 00000059   CACTL1
 0000005a   CACTL2
 0000005b   CAPD
@@ -248,6 +277,7 @@ address    name
 00000099   LCDM9
 00000134   MAC
 00000136   MACS
+00003142   MAX_COUNT
 00000005   ME2
 00000130   MPY
 00000132   MPYS
@@ -312,7 +342,7 @@ address    name
 00000008   PBIN
 0000000a   PBOUT
 0000000e   PBSEL
-0000311a   PORT1_ISR
+00003100   PORT1_ISR
 0000013c   RESHI
 0000013a   RESLO
 00000041   RTCCTL
@@ -392,14 +422,16 @@ address    name
 00000120   WDTCTL
 00003100   __STACK_END
 00000050   __STACK_SIZE
-UNDEFED    __TI_CINIT_Base
-UNDEFED    __TI_CINIT_Limit
-UNDEFED    __TI_Handler_Table_Base
-UNDEFED    __TI_Handler_Table_Limit
+00003154   __TI_CINIT_Base
+0000315c   __TI_CINIT_Limit
+0000314c   __TI_Handler_Table_Base
+00003154   __TI_Handler_Table_Limit
 UNDEFED    __TI_INITARRAY_Base
 UNDEFED    __TI_INITARRAY_Limit
-000100b8   __TI_ISR_TRAP
+00010150   __TI_ISR_TRAP
 00000001   __TI_args_main
+0001013e   __TI_decompress_none
+00010156   __TI_decompress_rle24
 00000001   __TI_exit
 0000ffdc   __TI_int14
 0000ffde   __TI_int15
@@ -421,14 +453,16 @@ UNDEFED    __TI_INITARRAY_Limit
 ffffffff   __binit__
 ffffffff   __c_args__
 00010000   _auto_init_hold_wdt
-00003100   _c_int00
-00003100   _c_int00_noexit
+00003128   _c_int00
+00003128   _c_int00_noexit
 0000fffe   _reset_vector
 000030b0   _stack
-000100be   _system_pre_init
-000100c2   abort
+0001015c   _system_pre_init
+00010160   abort
 ffffffff   binit
-0001006e   main
+00001100   count
+000100d0   main
+0001012a   memcpy
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -684,11 +718,17 @@ address    name
 000001ee   DMA2DA
 000001ee   DMA2DAL
 000001f2   DMA2SZ
+00001100   count
 000030b0   _stack
+00003100   PORT1_ISR
 00003100   __STACK_END
-00003100   _c_int00
-00003100   _c_int00_noexit
-0000311a   PORT1_ISR
+00003128   _c_int00
+00003128   _c_int00_noexit
+00003142   MAX_COUNT
+0000314c   __TI_Handler_Table_Base
+00003154   __TI_CINIT_Base
+00003154   __TI_Handler_Table_Limit
+0000315c   __TI_CINIT_Limit
 0000ffdc   __TI_int14
 0000ffde   __TI_int15
 0000ffe0   __TI_int16
@@ -708,19 +748,18 @@ address    name
 0000fffc   __TI_int30
 0000fffe   _reset_vector
 00010000   _auto_init_hold_wdt
-0001006e   main
-000100b8   __TI_ISR_TRAP
-000100be   _system_pre_init
-000100c2   C$$EXIT
-000100c2   abort
+000100d0   main
+0001012a   memcpy
+0001013e   __TI_decompress_none
+00010150   __TI_ISR_TRAP
+00010156   __TI_decompress_rle24
+0001015c   _system_pre_init
+00010160   C$$EXIT
+00010160   abort
 ffffffff   __binit__
 ffffffff   __c_args__
 ffffffff   binit
-UNDEFED    __TI_CINIT_Base
-UNDEFED    __TI_CINIT_Limit
-UNDEFED    __TI_Handler_Table_Base
-UNDEFED    __TI_Handler_Table_Limit
 UNDEFED    __TI_INITARRAY_Base
 UNDEFED    __TI_INITARRAY_Limit
 
-[287 symbols]
+[292 symbols]

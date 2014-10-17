@@ -6,16 +6,16 @@
 int count = 1;
 const int MAX_COUNT = 17;
 const int MCLK_freq = 1048576; // √ц
-//вычисл€ем количество тактов на полупериод
+
 const int ((MCLK_freq/697) +1 )/2; // нижн€€ частота DTMF 697 √ц
 const int ((MCLK_freq/770) +1 )/2; // нижн€€ частота DTMF 770 √ц
 const int ((MCLK_freq/852) +1 )/2; // нижн€€ частота DTMF 852 √ц
 const int ((MCLK_freq/941) +1 )/2; // нижн€€ частота DTMF 941 √ц
 
-const int ((MCLK_freq/1209) +1 )/2; // верхн€€ частота DTMF 1209 √ц
-const int ((MCLK_freq/1336) +1 )/2; // верхн€€ частота DTMF 1336 √ц
-const int ((MCLK_freq/1477) +1 )/2; // верхн€€ частота DTMF 1477 √ц
-const int ((MCLK_freq/1633) +1 )/2; // верхн€€ частота DTMF 1633 √ц
+const int ((MCLK_freq/1209) +1 )/2; // нижн€€ частота DTMF 1209 √ц
+const int ((MCLK_freq/1336) +1 )/2; // нижн€€ частота DTMF 1336 √ц
+const int ((MCLK_freq/1477) +1 )/2; // нижн€€ частота DTMF 1477 √ц
+const int ((MCLK_freq/1633) +1 )/2; // нижн€€ частота DTMF 1633 √ц
 
 //******************************************************************
 // Port1 Interrupt Service Rotine
@@ -93,7 +93,7 @@ int main(void)
 
 	TACCTL1 = OUTMOD_4 + CCIE; // TACCR1 toggle, interrupt enabled
 	TACCTL2 = OUTMOD_4 + CCIE; // TACCR2 toggle, iterrupt enabled
-	TACTL = TASSEL_2 + MC_2 + TAIE; // MCLK, countmode, interrupt enabled
+	TACTL = TASSEL_2 + MC_2 + TAIE; // ACLK, countmode, interrupt enabled
 	/*****************************************************/
 	/* онфигураци€ выходов*/
 	/*****************************************************/
